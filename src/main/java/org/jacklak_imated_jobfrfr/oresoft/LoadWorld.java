@@ -10,7 +10,7 @@ import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class LoadWorld {
+public final class LoadWorld {
     public static void setup(Plugin plugin) {
         try {
             copyWorldFromResources(plugin);

@@ -21,13 +21,10 @@ import wueffi.MiniGameCore.api.GameStartEvent;
 import wueffi.MiniGameCore.managers.LobbyManager;
 import wueffi.MiniGameCore.utils.Lobby;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 public final class ORESoft extends JavaPlugin implements Listener {
-    private LobbyManager lobbyManager;
-    private HashMap<String, GameState> gameStates = new HashMap<>();
+    private final HashMap<String, GameState> gameStates = new HashMap<>();
     private final Random rand = new Random();
 
     @Override
@@ -80,12 +77,15 @@ public final class ORESoft extends JavaPlugin implements Listener {
         PotionEffect invis = new PotionEffect(PotionEffectType.INVISIBILITY, PotionEffect.INFINITE_DURATION, 1, true, false);
         ItemStack bow = new ItemStack(Material.BOW);
         ItemMeta bowMeta = bow.getItemMeta();
+        List<Color> colors = Arrays.asList(Color.RED, Color.BLUE, Color.GREEN, Color.YELLOW, Color.PURPLE, Color.GRAY, Color.LIME, Color.AQUA);
+        Collections.shuffle(colors);
+        Iterator<Color> colorIter = colors.iterator();
 
         if (bowMeta != null) {
             bowMeta.addEnchant(Enchantment.INFINITY, 1, true);
             bowMeta.addEnchant(Enchantment.POWER, 2, true);
             bowMeta.setDisplayName("§6Shooter 3001 (tm)");
-            bowMeta.setLore(Arrays.asList(
+            bowMeta.setLore(List.of(
                     "§7This bow is given to all §6ORESoft §7players.",
                     "§7May it serve you well."
             ));
@@ -97,28 +97,26 @@ public final class ORESoft extends JavaPlugin implements Listener {
         for (Player player : lobby.getPlayers()) {
             player.sendMessage("§cWelcome to §6ORESoft§c! Your goal: be the §7last §cplayer standing. Good luck, and have fun!");
 
-            int red = rand.nextInt(256);
-            int green = rand.nextInt(256);
-            int blue = rand.nextInt(256);
+            Color color = colorIter.next();
 
             ItemStack helmet = new ItemStack(Material.LEATHER_HELMET);
             LeatherArmorMeta helmetMeta = (LeatherArmorMeta) helmet.getItemMeta();
-            helmetMeta.setColor(Color.fromRGB(red, green, blue));
+            helmetMeta.setColor(color);
             helmet.setItemMeta(helmetMeta);
 
             ItemStack chestplate = new ItemStack(Material.LEATHER_CHESTPLATE);
             LeatherArmorMeta chestplateMeta = (LeatherArmorMeta) chestplate.getItemMeta();
-            chestplateMeta.setColor(Color.fromRGB(red, green, blue));
+            chestplateMeta.setColor(color);
             chestplate.setItemMeta(chestplateMeta);
 
             ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS);
             LeatherArmorMeta leggingsMeta = (LeatherArmorMeta) leggings.getItemMeta();
-            leggingsMeta.setColor(Color.fromRGB(red, green, blue));
+            leggingsMeta.setColor(color);
             leggings.setItemMeta(leggingsMeta);
 
             ItemStack boots = new ItemStack(Material.LEATHER_BOOTS);
             LeatherArmorMeta bootsMeta = (LeatherArmorMeta) boots.getItemMeta();
-            bootsMeta.setColor(Color.fromRGB(red, green, blue));
+            bootsMeta.setColor(color);
             boots.setItemMeta(bootsMeta);
 
             player.getInventory().setHelmet(helmet);
@@ -148,7 +146,7 @@ public final class ORESoft extends JavaPlugin implements Listener {
         world.setGameRule(GameRule.DO_FIRE_TICK, false);
 
         for (var chunk : world.getLoadedChunks()) {
-            fillChests(chunk);
+            fillTiles(chunk);
         }
     }
 
@@ -158,7 +156,7 @@ public final class ORESoft extends JavaPlugin implements Listener {
         gameStates.remove(lobbyId);
     }
 
-    public void fillChests(Chunk chunk) {
+    public void fillTiles(Chunk chunk) {
         for (var tileEntity : chunk.getTileEntities()) {
             if (tileEntity instanceof Chest chest) {
                 var inv = chest.getInventory();

@@ -17,8 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-public class FireballHandler implements Listener {
-    private Set<UUID> fireBallRateLimits = new HashSet<>();
+public final class FireballHandler implements Listener {
+    private final Set<UUID> fireBallRateLimits = new HashSet<>();
     private final ORESoft oreSoft;
 
     public FireballHandler(ORESoft oreSoft) {
@@ -40,7 +40,7 @@ public class FireballHandler implements Listener {
         if (fireBallRateLimits.contains(player.getUniqueId())) return; // after cancel so they don't accidentally place fire
 
         fireBallRateLimits.add(player.getUniqueId());
-        Bukkit.getScheduler().runTaskLater(oreSoft, () -> { fireBallRateLimits.remove(player.getUniqueId()); }, 10L);
+        Bukkit.getScheduler().runTaskLater(oreSoft, () -> fireBallRateLimits.remove(player.getUniqueId()), 10L);
 
         if (player.getGameMode() != GameMode.CREATIVE) {
             player.getInventory().removeItem(new ItemStack(Material.FIRE_CHARGE, 1));
